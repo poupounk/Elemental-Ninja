@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeu de Cartes - Elemental Ninja</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="librairies/brython.js"></script>
+  <script type="text/javascript" src="librairies/brython_stdlib.js"></script>
+</head>
+<body onload="brython(1)">
+  <header>
+    <audio id="background-music" loop autoplay>
+      <source src="/documents_eleve/sound/[FREE] Club Penguin Type Beat Sensei (prod. itzNiL) - Club Penguin Dojo Theme Trap Remix.mp3" type="audio/mpeg">
+    </audio>
+    <h1>Jeu de Cartes - Elemental Ninja</h1>
+    <div id="zone_affichage_cartes">
+      <div>
+        <img id="carte_joueur" src="images/dos_carte.png" alt="Votre Carte">
+        <p style="text-align: center;">Votre Carte</p>
+      </div>
+      <div>
+        <img id="carte_ordi" src="images/dos_carte.png" alt="Carte de l'ordinateur">
+        <p style="text-align: center;">Carte de l'Ordinateur</p>
+      </div>
+    </div>
+    <div id="zone_cartes"></div>
+    <p id="message-tour"></p>
+    <div>
+      <img src="images/penguin_ninja_left.png" class="pingouin-right">
+      <img src="images/penguin_ninja_right.png" class="pingouin-left">
+    </div>
+    <!-- Zone pour afficher les images de victoire du joueur -->
+    <div id="victoire_image">
+      <div id="victoire_joueur_fire">
+        <h3 style="color: red;">Fire</h3>
+      </div>
+      <div id="victoire_joueur_water">
+        <h3 style="color: blue;">Water</h3>
+      </div>
+      <div id="victoire_joueur_ice">
+        <h3 style="color: cyan;">Ice</h3>
+      </div>
+    </div>
+    <!-- Zone pour afficher les images de victoire de l'ordinateur -->
+    <div id="victoire_ordi_image">
+      <div id="victoire_ordi_fire">
+        <h3 style="color: red;">Fire</h3>
+      </div>
+      <div id="victoire_ordi_water">
+        <h3 style="color: blue;">Water</h3>
+      </div>
+      <div id="victoire_ordi_ice">
+        <h3 style="color: cyan;">Ice</h3>
+      </div>
+    </div>
+    <!-- Ajout de la section des règles du jeu -->
+    <section id="regles">
+      <h2>Règles du Jeu :</h2>
+      <p>Bienvenue dans notre jeu de cartes avec les éléments Fire, Water, et Ice ! Deux conditions de victoire peuvent vous faire remporter la partie. Le jeu s'arrête dès qu'un joueur remplit l'une de ces conditions.</p>
+      <ol>
+        <li><strong>Avoir gagné 3 manches avec 3 fois le même élément et de couleurs différentes.</strong>
+          <ul>
+            <li>Exemple : Si vous choisissez Fire, vous devez gagner : une manche avec Fire en Red, une autre avec Fire en Yellow, Une troisième avec Fire en Green.</li>
+          </ul>
+        </li>
+        <li><strong>Avoir une carte de chaque élément et de couleurs différentes.</strong>
+          <ul>
+            <li>Exemple : Vous devez avoir : une carte Fire en Red, une carte Water en Blue, une carte Ice en Purple.</li>
+          </ul>
+        </li>
+      </ol>
+    </section>
+  </header>
+  <script type="text/python">
+    from browser import document, alert
+    import gerer_cartes
+
+    # Variables globales
+    victoires_par_element_joueur = {"fire": set(), "water": set(), "ice": set()}
+    victoires_par_element_ordi = {"fire": set(), "water": set(), "ice": set()}
+    cartes_unique_joueur = {"fire": None, "water": None, "ice": None}
+    cartes_unique_ordi = {"fire": None, "water": None, "ice": None}
+
+    # Générer une pioche partagée
+    pioche = gerer_cartes.generer_pioche()
+
+    # Main du joueur et de l'adversaire (5 cartes chacun)
+    mesCartes = gerer_cartes.choisir_depuis_pioche(pioche, 5)
+    cartes_ordi = gerer_cartes.choisir_depuis_pioche(pioche, 5)
+
+    # Comparer deux cartes
+    def comparer_cartes(carte_joueur, carte_ordi):
+        return gerer_cartes.comparer_cartes(carte_joueur, carte_ordi)
+
+    # Fonction pour vérifier les conditions de victoire
+    def verifier_conditions_victoire():
+        # Condition 1 : 3 victoires avec le même élément et des couleurs différentes
+        for element, couleurs in victoires_par_element_joueur.items():
+            if len(couleurs) >= 3:
+                alert(f"Victoire ! Vous avez gagné 3 manches avec l'élément {element} et des couleurs différentes.")
+                return True
+
+        # Condition 2 : Avoir une carte de chaque élément et des couleurs différentes
+        couleurs_utilisees = set()
+        for element, carte in cartes_unique_joueur.items():
+            if carte:
+                couleurs_utilisees.add(carte)
+
+        if len(couleurs_utilisees) == 3:
+            alert("Victoire ! Vous avez une carte de chaque élément avec des couleurs différentes.")
+            return True
+
+        return False
+
+    def verifier_conditions_victoire_ordi():
+        # Condition 1 : 3 victoires avec le même élément et des couleurs différentes
+        for element, couleurs in victoires_par_element_ordi.items():
+            if len(couleurs) >= 3:
+                alert(f"Défaite ! L'ordinateur a gagné 3 manches avec l'élément {element} et des couleurs différentes.")
+                return True
+
+        # Condition 2 : Avoir une carte de chaque élément et des couleurs différentes
+        couleurs_utilisees = set()
+        for element, carte in cartes_unique_ordi.items():
+            if carte:
+                couleurs_utilisees.add(carte)
+
+        if len(couleurs_utilisees) == 3:
+            alert("Défaite ! L'ordinateur a une carte de chaque élément avec des couleurs différentes.")
+            return True
+
+        return False
+
+    # Fonction pour afficher l'image du gagnant dans la colonne correspondante
+    def afficher_image_victoire(element, couleur, gagnant):
+        image_name = f"{element}_{couleur}"
+        image_html = f'<img src="images/{image_name}.png" alt="{image_name}" style="width: 100px; height: auto;">'
+
+        # Ajouter l'image dans la colonne de l'élément
+        if gagnant == "joueur":
+            div_victoire = document[f"victoire_joueur_{element}"]
+            div_victoire.innerHTML += image_html
+        elif gagnant == "ordi":
+            div_victoire = document[f"victoire_ordi_{element}"]
+            div_victoire.innerHTML += image_html
+
+    # Fonction pour jouer une carte
+    def jouer_carte(event):
+        global mesCartes, cartes_ordi
+
+        try:
+            numClic = int(event.target.id)
+
+            # Carte jouée par le joueur
+            carte_joueur = mesCartes[numClic]
+            mesCartes[numClic] = gerer_cartes.tirer_carte_aleatoire(pioche)  # Remplacer par une nouvelle carte
+            document[f"{numClic}"].src = f"images/{gerer_cartes.afficher(mesCartes[numClic])}.png"  # Mise à jour visuelle
+
+            # Carte jouée par l'ordinateur
+            if cartes_ordi:
+                carte_ordi = cartes_ordi.pop(0)
+            else:
+                carte_ordi = gerer_cartes.tirer_carte_aleatoire(pioche)
+
+            document["carte_joueur"].src = f"images/{gerer_cartes.afficher(carte_joueur)}.png"
+            document["carte_ordi"].src = f"images/{gerer_cartes.afficher(carte_ordi)}.png"
+
+            # Comparer les cartes
+            document["message-tour"].text = f"Vous : {gerer_cartes.afficher(carte_joueur)} | Ordi : {gerer_cartes.afficher(carte_ordi)}"
+            gagnant = comparer_cartes(carte_joueur, carte_ordi)
+            if gagnant == "joueur":
+                element = carte_joueur["element"]
+                couleur = gerer_cartes.couleurs_cartes[f"{element}_{carte_joueur['valeur']}"]
+                afficher_image_victoire(element, couleur, "joueur")
+                victoires_par_element_joueur[element].add(couleur)
+                cartes_unique_joueur[element] = couleur
+                document["message-tour"].text += " -> Vous gagnez ce tour !"
+            elif gagnant == "ordi":
+                element = carte_ordi["element"]
+                couleur = gerer_cartes.couleurs_cartes[f"{element}_{carte_ordi['valeur']}"]
+                afficher_image_victoire(element, couleur, "ordi")
+                victoires_par_element_ordi[element].add(couleur)
+                cartes_unique_ordi[element] = couleur
+                document["message-tour"].text += " -> L'adversaire gagne ce tour !"
+            else:
+                document["message-tour"].text += " -> Égalité !"
+
+            if verifier_conditions_victoire():
+                return
+            if verifier_conditions_victoire_ordi():
+                return
+
+        except (IndexError, ValueError) as e:
+            document["message-tour"].text = f"Erreur : {e}"
+
+    # Générer et afficher les cartes
+    def creer_images():
+        document["zone_cartes"].innerHTML = ""
+        for i, carte in enumerate(mesCartes):
+            document["zone_cartes"].innerHTML += f"<img class='carte' id='{i}' src='images/{gerer_cartes.afficher(carte)}.png'>"
+
+        # Lier les événements après avoir affiché les cartes
+        for i in range(len(mesCartes)):
+            document[f"{i}"].bind("click", jouer_carte)
+
+    # Exécution du script
+    creer_images()
+  </script>
+  <footer>
+    <canvas id="flames"></canvas>
+    <script src="flamme.js"></script>
+  </footer>
+</body>
+</html>

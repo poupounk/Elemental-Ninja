@@ -1,0 +1,128 @@
+body {
+  background-image: url(/documents_eleve/images/dojo_bg.png);
+  background-size: cover;
+}
+
+h1 {
+  text-align: center;
+  color: rgb(255, 0, 242);
+}
+
+#zone_affichage_cartes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  gap: 20px;
+}
+
+#carte_joueur, #carte_ordi {
+  width: 147px;
+  height: 216px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#zone_cartes {
+  display: flex;
+  justify-content: center;
+}
+
+.carte {
+  width: 147px;
+  height: 216px;
+  border-radius: 10px;
+  margin: 10px;
+  cursor: pointer;
+  gap: 20px;
+}
+
+.carte:hover {
+  transform: scale(1.1);
+}
+
+#message-tour {
+  text-align: center;
+  font-size: 1.5em; 
+  margin-top: 20px;
+  font-weight: bold; 
+  color: rgb(255, 0, 242);
+}
+
+#zone_affichage_cartes p {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: rgb(255, 0, 242);
+}
+
+.pingouin-left {
+  width: 200px;
+  float: left;
+}
+
+.pingouin-right {
+  width: 200px;
+  float: right;
+}
+
+#victoire_image {
+  position: absolute;
+  top: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 10;
+}
+
+#victoire_joueur_fire, #victoire_joueur_water, #victoire_joueur_ice {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+}
+
+#victoire_ordi_image {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 10;
+}
+
+#victoire_ordi_fire, #victoire_ordi_water, #victoire_ordi_ice {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+}
+
+#victoire_joueur_fire, #victoire_joueur_water, #victoire_joueur_ice {
+  left: 10px;
+}
+
+#victoire_image img, #victoire_ordi_image img {
+  width: 50px;
+  height: auto;
+  margin: 0;
+}
+
+canvas {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#regles {
+  position: fixed;  
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 40px;
+  color: white;
+  border-radius: 10px;
+}
